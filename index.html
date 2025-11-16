@@ -1,0 +1,242 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Epic Prompt Request Generator</title>
+<link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg'><polygon points='8,0 16,16 0,16' fill='%239c4dff'/></svg>">
+<style>
+:root {
+    --primary-color: #9c4dff;
+    --secondary-color: #6c34ff;
+    --light-bg: #fafafa;
+    --card-bg: #ffffff;
+    --text-color: #333333;
+    --border-color: #e0e0e0;
+    --shadow: 0 4px 12px rgba(0,0,0,0.05);
+    --hover-bg: #f5f5f5;
+}
+* { margin:0; padding:0; box-sizing:border-box; font-family:'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;}
+body { background-color: var(--light-bg); padding:20px; display:flex; justify-content:center; align-items:flex-start; min-height:100vh;}
+.container { width:100%; max-width:900px; background:var(--card-bg); border-radius:12px; box-shadow:var(--shadow); padding:30px; overflow-y:auto;}
+header { text-align:center; margin-bottom:30px;}
+h1 { color:var(--primary-color); font-size:2.5rem; margin-bottom:10px;}
+.subtitle { color:var(--text-color); font-size:0.9rem; margin-bottom:20px;}
+.form-section { background: var(--light-bg); border-radius: 8px; padding: 20px; margin-bottom:20px; border:1px solid var(--border-color);}
+.form-title { font-size:1.1rem; font-weight:600; margin-bottom:10px; color:var(--text-color);}
+.form-description { font-size:0.85rem; color:#666; margin-bottom:15px;}
+.form-group { margin-bottom:15px;}
+label { display:block; margin-bottom:5px; font-weight:500; color:var(--text-color);}
+.required::after { content:" *"; color:red;}
+input[type="text"], textarea, select { width:100%; padding:12px; border:1px solid var(--border-color); border-radius:6px; font-size:1rem; transition:border-color 0.2s; background-color:white;}
+input[type="text"]:focus, textarea:focus, select:focus { outline:none; border-color: var(--primary-color); box-shadow:0 0 0 2px rgba(156,77,255,0.1);}
+textarea { min-height:80px; resize:vertical;}
+.button-group { display:flex; gap:10px; flex-wrap:wrap; margin-top:20px;}
+button { padding:10px 16px; border:none; border-radius:6px; cursor:pointer; font-weight:500; transition:all 0.2s; display:flex; align-items:center; gap:6px;}
+button:hover { transform:translateY(-1px);}
+.btn-primary { background-color:var(--primary-color); color:white;}
+.btn-primary:hover { background-color:var(--secondary-color);}
+.btn-secondary { background-color:#e0e0e0; color:var(--text-color);}
+.btn-secondary:hover { background-color:#d0d0d0;}
+.btn-outline { background:transparent; border:1px solid var(--border-color); color:var(--text-color);}
+.btn-outline:hover { background-color:var(--hover-bg);}
+.output-section { margin-top:30px; background: var(--light-bg); border-radius: 8px; padding:20px; border:1px solid var(--border-color);}
+.output-title { font-size:1.1rem; font-weight:600; margin-bottom:10px; display:flex; justify-content:space-between; align-items:center;}
+.copy-btn, .download-btn { padding:6px 12px; font-size:0.9rem; background:white; border:1px solid var(--border-color); border-radius:4px; cursor:pointer;}
+.copy-btn:hover, .download-btn:hover { background-color:var(--hover-bg);}
+.output-area { width:100%; min-height:150px; padding:15px; border:1px solid var(--border-color); border-radius:6px; background:white; font-family:'Courier New', Courier, monospace; font-size:0.95rem; line-height:1.5; white-space:pre-wrap; word-wrap:break-word; color:var(--text-color);}
+.saved-requests { margin-top:15px;}
+.saved-requests select { width:100%; padding:10px; border:1px solid var(--border-color); border-radius:6px;}
+footer { margin-top:40px; text-align:center; font-size:0.8rem; color:#999; padding-top:20px; border-top:1px solid var(--border-color);}
+@media (max-width:768px) { .container{ padding:20px;} h1{ font-size:2rem;} .button-group{ flex-direction:column;} }
+</style>
+</head>
+<body>
+<div class="container">
+<header>
+<h1>Epic Prompt Request Generator</h1>
+<p class="subtitle">Dynamic prompts for any workflow—flexible, saveable, and copyable.</p>
+</header>
+
+<div class="form-section">
+<div class="form-title">Request Details</div>
+<div class="form-description">Fill in the sections to generate a structured prompt</div>
+
+<div class="form-group">
+<label for="category">Category</label>
+<select id="category">
+<option value="">Any</option>
+<option value="Development">Development</option>
+<option value="Design">Design</option>
+<option value="Content">Content</option>
+<option value="Operations">Operations</option>
+<option value="Strategy">Strategy</option>
+<option value="Other">Other</option>
+</select>
+</div>
+
+<div class="form-group">
+<label for="context">Context</label>
+<textarea id="context" placeholder="Background info about your project or problem..."></textarea>
+</div>
+
+<div class="form-group">
+<label for="request" class="required">Request</label>
+<textarea id="request" placeholder="Describe what you need help with..."></textarea>
+</div>
+
+<div class="form-group">
+<label for="parentTask">Parent Task</label>
+<input type="text" id="parentTask" placeholder="Optional parent task">
+</div>
+
+<div class="form-group">
+<label for="subtask">Subtask</label>
+<input type="text" id="subtask" placeholder="Optional subtask">
+</div>
+
+<div class="form-group">
+<label for="relevantData">Relevant Data</label>
+<textarea id="relevantData" placeholder="Paste code, CSV, JSON, logs, etc."></textarea>
+</div>
+
+<div class="form-group saved-requests">
+<label for="savedRequests">Load Saved Request</label>
+<select id="savedRequests">
+<option value="">Select</option>
+</select>
+</div>
+
+<div class="button-group">
+<button id="generateBtn" class="btn-primary">✨ Generate Prompt</button>
+<button id="saveBtn" class="btn-secondary">💾 Save Request</button>
+<button id="clearBtn" class="btn-outline">Clear Form</button>
+</div>
+</div>
+
+<div class="output-section">
+<div class="output-title">
+<span>Generated Prompt</span>
+<div>
+<button id="copyBtn" class="copy-btn">📋 Copy</button>
+<button id="downloadBtn" class="download-btn">⬇️ Download</button>
+</div>
+</div>
+<div class="output-area" id="outputArea">Your generated prompt will appear here.</div>
+</div>
+
+<footer>
+© 2025 Wesley Quintero. All rights reserved.
+</footer>
+</div>
+
+<script>
+document.addEventListener('DOMContentLoaded',function(){
+const category = document.getElementById('category');
+const context = document.getElementById('context');
+const request = document.getElementById('request');
+const parentTask = document.getElementById('parentTask');
+const subtask = document.getElementById('subtask');
+const relevantData = document.getElementById('relevantData');
+const savedRequests = document.getElementById('savedRequests');
+const generateBtn = document.getElementById('generateBtn');
+const saveBtn = document.getElementById('saveBtn');
+const clearBtn = document.getElementById('clearBtn');
+const outputArea = document.getElementById('outputArea');
+const copyBtn = document.getElementById('copyBtn');
+const downloadBtn = document.getElementById('downloadBtn');
+
+function loadSavedRequests(){
+let saved = JSON.parse(localStorage.getItem('promptRequests')||'[]');
+savedRequests.innerHTML='<option value="">Select</option>';
+saved.forEach((r,i)=>{
+let option=document.createElement('option');
+option.value=i;
+option.textContent=r.name||`Request ${i+1}`;
+savedRequests.appendChild(option);
+});
+}
+
+function autosaveForm(){ 
+const formState = {
+category:category.value,
+context:context.value,
+request:request.value,
+parentTask:parentTask.value,
+subtask:subtask.value,
+relevantData:relevantData.value
+};
+sessionStorage.setItem('prgFormState',JSON.stringify(formState));
+}
+
+function loadAutosave(){ 
+const state=JSON.parse(sessionStorage.getItem('prgFormState')||'{}');
+if(state){ 
+category.value=state.category||'';
+context.value=state.context||'';
+request.value=state.request||'';
+parentTask.value=state.parentTask||'';
+subtask.value=state.subtask||'';
+relevantData.value=state.relevantData||'';
+}
+}
+
+saveBtn.addEventListener('click',function(){
+const name=prompt("Name this request:",`Request ${Date.now()}`);
+if(name===null) return;
+const data={name:name.trim()||`Request ${Date.now()}`, category:category.value, context:context.value, request:request.value, parentTask:parentTask.value, subtask:subtask.value, relevantData:relevantData.value};
+let saved=JSON.parse(localStorage.getItem('promptRequests')||'[]');
+saved.push(data);
+localStorage.setItem('promptRequests',JSON.stringify(saved));
+loadSavedRequests();
+alert(`Saved "${data.name}" successfully!`);
+});
+
+savedRequests.addEventListener('change',function(){
+if(this.value==='') return;
+const saved=JSON.parse(localStorage.getItem('promptRequests')||'[]');
+const sel=saved[this.value];
+if(sel){ category.value=sel.category||''; context.value=sel.context||''; request.value=sel.request||''; parentTask.value=sel.parentTask||''; subtask.value=sel.subtask||''; relevantData.value=sel.relevantData||''; }
+});
+
+generateBtn.addEventListener('click',function(){
+if(!request.value.trim()){ alert("Fill in the Request field!"); return; }
+let prompt='';
+if(category.value) prompt+=`## Category\n${category.value}\n\n`;
+if(context.value.trim()) prompt+=`## Context\n${context.value.trim()}\n\n`;
+prompt+=`## Request\n${request.value.trim()}\n\n`;
+if(parentTask.value.trim()) prompt+=`## Parent Task\n${parentTask.value.trim()}\n\n`;
+if(subtask.value.trim()) prompt+=`## Subtask\n${subtask.value.trim()}\n\n`;
+if(relevantData.value.trim()) prompt+=`## Relevant Data\n${relevantData.value.trim()}\n\n`;
+prompt+=`## Instructions\nPlease provide a detailed, step-by-step solution or response based on the information above.`;
+outputArea.textContent=prompt;
+autosaveForm();
+});
+
+clearBtn.addEventListener('click',function(){
+if(confirm("Clear all fields?")){
+category.value=''; context.value=''; request.value=''; parentTask.value=''; subtask.value=''; relevantData.value='';
+outputArea.textContent='Your generated prompt will appear here.';
+sessionStorage.removeItem('prgFormState');
+}
+});
+
+copyBtn.addEventListener('click',function(){
+if(outputArea.textContent.trim()==='Your generated prompt will appear here.'){ alert("Generate a prompt first!"); return; }
+navigator.clipboard.writeText(outputArea.textContent).then(()=>{const t=copyBtn.textContent; copyBtn.textContent='✅ Copied!'; setTimeout(()=>{copyBtn.textContent=t;},2000);}).catch(()=>alert("Failed to copy!"));
+});
+
+downloadBtn.addEventListener('click',function(){
+if(outputArea.textContent.trim()==='Your generated prompt will appear here.'){ alert("Generate a prompt first!"); return; }
+const blob=new Blob([outputArea.textContent],{type:'text/plain'});
+const url=URL.createObjectURL(blob);
+const a=document.createElement('a'); a.href=url; a.download='prompt.txt'; a.click(); URL.revokeObjectURL(url);
+});
+
+document.querySelectorAll('input,textarea,select').forEach(el=>el.addEventListener('input',autosaveForm));
+
+loadSavedRequests(); loadAutosave();
+});
+</script>
+</body>
+</html>
