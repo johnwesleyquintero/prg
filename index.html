@@ -1,16 +1,16 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
     <title>Epic Prompt Generator</title>
     <!-- Fonts -->
-    <link rel="preconnect" href="https://fonts.googleapis.com">
-    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet" />
     <!-- Lucide Icons -->
     <script src="https://unpkg.com/lucide@latest"></script>
-    
+
     <style>
         :root {
             --primary: #8b5cf6;
@@ -330,10 +330,9 @@
                 <i data-lucide="pen-tool" size="20"></i>
                 Request Details
             </div>
-            
         </div>
         <div class="card-body">
-            
+
             <!-- Category & Saved Requests Row -->
             <div class="grid-row">
                 <div class="form-group">
@@ -341,12 +340,7 @@
                     <div style="position:relative;">
                         <select id="category">
                             <option value="">Select a domain...</option>
-                            <option value="Software Development">Software Development</option>
-                            <option value="Data Analysis">Data Analysis</option>
-                            <option value="Content Creation">Content Creation</option>
-                            <option value="System Operations">System Operations</option>
-                            <option value="Business Strategy">Business Strategy</option>
-                            <option value="UI/UX Design">UI/UX Design</option>
+                            <!-- Dynamically populated from categories list -->
                         </select>
                     </div>
                 </div>
@@ -436,8 +430,35 @@
     // Initialize Lucide Icons
     lucide.createIcons();
 
+    // Comprehensive task categories
+    const CATEGORIES = [
+        "Software Engineering",
+        "Data Science & Analytics",
+        "DevOps & SRE",
+        "Cybersecurity",
+        "Cloud Architecture",
+        "UI/UX Design",
+        "Product Management",
+        "Technical Writing",
+        "AI / Machine Learning",
+        "Embedded Systems",
+        "Blockchain",
+        "QA & Testing",
+        "Database Engineering",
+        "Networking",
+        "Mobile Development",
+        "Game Development",
+        "Business Strategy",
+        "Legal & Compliance",
+        "Marketing Automation",
+        "Research & Academia",
+        "Hardware Engineering",
+        "Education & Training",
+        "Content Creation",
+        "System Operations"
+    ];
+
     document.addEventListener('DOMContentLoaded', function(){
-        // Elements
         const els = {
             category: document.getElementById('category'),
             context: document.getElementById('context'),
@@ -447,7 +468,6 @@
             relevantData: document.getElementById('relevantData'),
             savedRequests: document.getElementById('savedRequests'),
             outputArea: document.getElementById('outputArea'),
-            // Buttons
             generateBtn: document.getElementById('generateBtn'),
             saveBtn: document.getElementById('saveBtn'),
             clearBtn: document.getElementById('clearBtn'),
@@ -456,27 +476,31 @@
             deleteSavedBtn: document.getElementById('deleteSavedBtn')
         };
 
-        // Toast Function
+        // Populate category dropdown
+        CATEGORIES.forEach(cat => {
+            const opt = document.createElement('option');
+            opt.value = cat;
+            opt.textContent = cat;
+            els.category.appendChild(opt);
+        });
+
+        // Toast utility
         function showToast(message, isError = false) {
             const toast = document.getElementById('toast');
             const msg = document.getElementById('toastMsg');
             msg.textContent = message;
-            
-            // Icon handling
             const icon = toast.querySelector('svg');
             if(icon) icon.remove();
-            
             const newIcon = document.createElement('i');
             newIcon.setAttribute('data-lucide', isError ? 'alert-circle' : 'check-circle');
             newIcon.style.color = isError ? '#f87171' : '#34d399';
             toast.prepend(newIcon);
             lucide.createIcons();
-
             toast.className = "show";
             setTimeout(() => { toast.className = toast.className.replace("show", ""); }, 3000);
         }
 
-        // Logic: Load Saved
+        // Load saved requests
         function loadSavedRequests() {
             let saved = JSON.parse(localStorage.getItem('epg_saved') || '[]');
             els.savedRequests.innerHTML = '<option value="">Load previous...</option>';
@@ -488,7 +512,7 @@
             });
         }
 
-        // Logic: Autosave Session
+        // Autosave session
         function autosaveForm() {
             const formState = {
                 category: els.category.value,
@@ -501,7 +525,7 @@
             sessionStorage.setItem('epg_session', JSON.stringify(formState));
         }
 
-        // Logic: Load Autosave
+        // Load autosave
         function loadAutosave() {
             const state = JSON.parse(sessionStorage.getItem('epg_session') || '{}');
             if (state) {
@@ -514,7 +538,7 @@
             }
         }
 
-        // Event: Save Request
+        // Save current input
         els.saveBtn.addEventListener('click', function() {
             if(!els.request.value && !els.context.value) {
                 showToast("Enter some data to save!", true);
@@ -522,7 +546,6 @@
             }
             const name = prompt("Name this request preset:", `Req ${new Date().toLocaleDateString()}`);
             if (name === null) return;
-            
             const data = {
                 name: name.trim() || `Untitled ${Date.now()}`,
                 category: els.category.value,
@@ -532,7 +555,6 @@
                 subtask: els.subtask.value,
                 relevantData: els.relevantData.value
             };
-            
             let saved = JSON.parse(localStorage.getItem('epg_saved') || '[]');
             saved.push(data);
             localStorage.setItem('epg_saved', JSON.stringify(saved));
@@ -540,7 +562,7 @@
             showToast(`Saved "${data.name}"!`);
         });
 
-        // Event: Load Selected
+        // Load saved request
         els.savedRequests.addEventListener('change', function() {
             if (this.value === '') return;
             const saved = JSON.parse(localStorage.getItem('epg_saved') || '[]');
@@ -557,7 +579,7 @@
             }
         });
 
-        // Event: Delete Selected
+        // Delete saved request
         els.deleteSavedBtn.addEventListener('click', function(){
             const val = els.savedRequests.value;
             if(val === '') {
@@ -573,7 +595,7 @@
             }
         });
 
-        // Event: Generate
+        // Generate structured prompt
         els.generateBtn.addEventListener('click', function() {
             if (!els.request.value.trim()) {
                 showToast("Core Request field is required!", true);
@@ -581,13 +603,12 @@
                 return;
             }
 
-            const timestamp = new Date().toLocaleString();
-            let prompt = `### 🤖 Prompt Request\n**Date:** ${timestamp}\n\n`;
+            const timestamp = new Date().toLocaleString('en-US', { hour12: false });
+            let prompt = `### 🤖 Prompt Request\n**Generated:** ${timestamp}\n\n`;
 
             if (els.category.value) prompt += `**Category:** ${els.category.value}\n`;
             if (els.parentTask.value) prompt += `**Epic/Parent Task:** ${els.parentTask.value}\n`;
             if (els.subtask.value) prompt += `**Current Subtask:** ${els.subtask.value}\n`;
-            
             prompt += `\n---\n\n`;
 
             if (els.context.value.trim()) {
@@ -601,21 +622,19 @@
             }
 
             prompt += `---\n\n`;
-            prompt += `### 🎯 Instructions\n`;
-            prompt += `1. Analyze the context and data provided above.\n`;
-            prompt += `2. Provide a step-by-step, high-quality solution.\n`;
-            prompt += `3. If code is required, ensure it is optimized, commented, and error-free.\n`;
-            prompt += `4. Format the output cleanly using Markdown.`;
+            prompt += `### 🎯 Instructions for Model\n`;
+            prompt += `1. Adopt a direct persona expert in **${els.category.value || 'the relevant field'}**.\n`;
+            prompt += `2. Analyze the context and constraints deeply before answering.\n`;
+            prompt += `3. Provide the response strictly in the requested format.\n`;
+            prompt += `4. Prioritize clarity, precision, and actionable output.`;
 
             els.outputArea.textContent = prompt;
-            
-            // Scroll to output
             document.getElementById('outputSection').scrollIntoView({ behavior: 'smooth' });
             showToast("Prompt Generated!");
             autosaveForm();
         });
 
-        // Event: Clear
+        // Clear form
         els.clearBtn.addEventListener('click', function() {
             if (confirm("Reset all fields? This cannot be undone.")) {
                 els.category.value = '';
@@ -630,7 +649,7 @@
             }
         });
 
-        // Event: Copy
+        // Copy output
         els.copyBtn.addEventListener('click', function() {
             const text = els.outputArea.textContent;
             if (text.includes('will render here...')) {
@@ -642,7 +661,7 @@
             }).catch(() => showToast("Failed to copy", true));
         });
 
-        // Event: Download
+        // Download output
         els.downloadBtn.addEventListener('click', function() {
             const text = els.outputArea.textContent;
             if (text.includes('will render here...')) {
@@ -659,10 +678,10 @@
             showToast("Download started");
         });
 
-        // Listeners for Autosave
+        // Autosave on input
         document.querySelectorAll('input,textarea,select').forEach(el => el.addEventListener('input', autosaveForm));
 
-        // Init
+        // Initialize
         loadSavedRequests();
         loadAutosave();
     });
