@@ -1,88 +1,74 @@
-# Epic Prompt Request Generator
+# ⚡ Epic Prompt Generator
 
-A lightweight, web-based tool to generate structured prompts for any workflow—flexible, saveable, and copyable. Perfect for developers, designers, content creators, operations specialists, and strategists who need a quick way to formalize and organize requests.
-
----
-
-## 🚀 Features
-
-* **Dynamic Prompt Generation:** Automatically combines your inputs (category, context, request, parent task, subtask, relevant data) into a clean, structured prompt.
-* **Save & Load Requests:** Store commonly used requests in the browser for quick reuse.
-* **Copy & Download:** Copy the generated prompt to the clipboard or download it as a `.txt` file.
-* **Autosave Form State:** Your progress is saved automatically in session storage to prevent data loss.
-* **Responsive Design:** Works smoothly on desktop and mobile devices.
-* **Customizable Categories:** Predefined categories include Development, Design, Content, Operations, Strategy, and Other.
+A high-performance, browser-based tool designed to transform raw ideas into structured, professional prompts. Built for the modern builder who values speed, precision, and strategic autonomy.
 
 ---
 
-## 📋 Usage
+## 🚀 Key Features
 
-1. **Open the tool** in your browser (simply open the HTML file).
-2. **Fill out the form:**
-
-   * **Category:** Select a relevant category.
-   * **Context:** Provide background information.
-   * **Request:** Describe the task or problem you need help with (required).
-   * **Parent Task / Subtask:** Optional fields to organize your request.
-   * **Relevant Data:** Paste any code, CSV, JSON, logs, or other reference material.
-3. **Generate Prompt:** Click `✨ Generate Prompt` to create a structured prompt based on your inputs.
-4. **Copy or Download:**
-
-   * `📋 Copy` copies the generated prompt to your clipboard.
-   * `⬇️ Download` saves it as `prompt.txt`.
-5. **Save Requests:** Use `💾 Save Request` to store prompts for future reuse.
-6. **Clear Form:** Reset all fields using the `Clear Form` button.
+*   **Structured Prompt Engineering:** Automatically formats inputs (Category, Context, Core Request, Epics, Subtasks) into a clean, markdown-ready structure.
+*   **Robust Copy System:** Enhanced clipboard integration that works across all environments, including local `file://` protocols and non-secure contexts.
+*   **Persistent Workflow:**
+    *   **Autosave:** Never lose progress with real-time session storage.
+    *   **Request Presets:** Save and manage commonly used request templates in local storage.
+*   **Intelligent UI/UX:**
+    *   Responsive design for seamless mobile and desktop usage.
+    *   Modern aesthetic powered by Google Fonts (Inter & JetBrains Mono) and Lucide Icons.
+    *   Instant visual feedback (loading states, toast notifications).
+*   **Dynamic Categories:** Supports 20+ professional domains including Software Engineering, AI/ML, DevOps, and Business Strategy.
 
 ---
 
-## 🖥️ Installation
+## 📋 How to Use
 
-1. Download or clone this repository.
-2. Open `index.html` in any modern browser (Chrome, Firefox, Edge, Safari).
-3. No backend required—fully client-side.
-
----
-
-## 🎨 Customization
-
-* **Styling:** Edit the CSS variables in the `<style>` block to match your preferred colors or branding.
-
-  ```css
-  --primary-color: #9c4dff;
-  --secondary-color: #6c34ff;
-  --light-bg: #fafafa;
-  ```
-* **Categories:** Update the `<select>` options in the `Category` dropdown to match your workflow.
+1.  **Launch:** Open `index.html` in any modern web browser.
+2.  **Input Details:**
+    *   **Category:** Select your professional domain.
+    *   **Context:** Provide the "Why" and "How" (e.g., tech stack, target audience).
+    *   **Core Request:** The "What" — your primary objective (Required).
+    *   **Organization:** Define Parent Tasks (Epics) and Subtasks for complex workflows.
+    *   **Data/Code:** Paste snippets, logs, or JSON for deep analysis.
+3.  **Execute:** Click `✨ Generate Prompt` to compile your request.
+4.  **Export:**
+    *   `📋 Copy`: Instant clipboard sync with visual confirmation.
+    *   `⬇️ Save .txt`: Downloads a timestamped `.md` file for your records.
+5.  **Manage:** Use `💾 Save Input` to create reusable presets or `🗑️ Delete` to clean up your library.
 
 ---
 
-## ⚡ Technologies Used
+## 🖥️ Installation & Tech Stack
 
-* HTML5 & CSS3 (with CSS variables for easy theming)
-* Vanilla JavaScript (no frameworks required)
-* LocalStorage for saved requests
-* SessionStorage for autosave functionality
+No installation required. This is a zero-dependency, pure client-side solution.
 
----
-
-## 🧩 How It Works
-
-1. User fills in the form.
-2. JavaScript collects input values and generates a structured prompt in Markdown-like format.
-3. Optional fields (Parent Task, Subtask, Relevant Data) are appended if filled.
-4. Autosave keeps the form state in session storage.
-5. Saved requests are stored in LocalStorage for future retrieval.
-6. Generated prompt can be copied or downloaded as a text file.
+*   **Frontend:** HTML5, CSS3 (Modern Flex/Grid, Custom Properties)
+*   **Logic:** Vanilla JavaScript (ES6+)
+*   **Assets:** [Lucide Icons](https://lucide.dev/), [Google Fonts](https://fonts.google.com/)
+*   **Storage:** LocalStorage (Presets) & SessionStorage (Drafts)
 
 ---
 
-## 👤 Author
+## 🎨 Strategic Customization
+
+The system is built to be a reusable playbook. You can easily adapt the styles or categories in the source code:
+
+```css
+/* Update theme variables in :root */
+--primary: #8b5cf6; /* Main brand color */
+--radius: 12px;   /* UI rounding */
+```
+
+```javascript
+/* Add custom categories in the script block */
+const CATEGORIES = ["Your Custom Domain", ...];
+```
+
+---
+
+## 👤 Author & Philosophy
 
 **John Wesley Quintero**
-© 2025. All rights reserved.
+*Founder | Architect | Educator*
 
----
+This tool is built on the principle of **Building the System** — creating reusable, scalable assets that increase strategic autonomy and operational efficiency.
 
-## 📂 License
-
-This project is free to use and modify for personal or professional use.
+© 2025. Built for results.
