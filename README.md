@@ -8,13 +8,15 @@ A high-performance, browser-based tool designed to transform raw ideas into stru
 
 *   **Structured Prompt Engineering:** Automatically formats inputs (Category, Context, Core Request, Epics, Subtasks) into a clean, markdown-ready structure.
 *   **Robust Copy System:** Enhanced clipboard integration that works across all environments, including local `file://` protocols and non-secure contexts.
-*   **Persistent Workflow:**
+*   **Strategic Autonomy Tools:**
+    *   **Import/Export Presets:** Port your request playbooks between devices via JSON files.
     *   **Autosave:** Never lose progress with real-time session storage.
     *   **Request Presets:** Save and manage commonly used request templates in local storage.
 *   **Intelligent UI/UX:**
-    *   Responsive design for seamless mobile and desktop usage.
-    *   Modern aesthetic powered by Google Fonts (Inter & JetBrains Mono) and Lucide Icons.
-    *   Instant visual feedback (loading states, toast notifications).
+    *   **Dark Mode:** Toggle between light and dark themes for any environment.
+    *   **Keyboard Shortcuts:** `Ctrl+Enter` to generate, `Ctrl+S` to save.
+    *   **Real-time Stats:** Instant character and word count for your generated prompts.
+    *   **Visual Feedback:** Loading states, toast notifications, and smooth scrolling.
 *   **Dynamic Categories:** Supports 20+ professional domains including Software Engineering, AI/ML, DevOps, and Business Strategy.
 
 ---
@@ -53,8 +55,8 @@ The system is built to be a reusable playbook. You can easily adapt the styles o
 
 ```css
 /* Update theme variables in :root */
---primary: #8b5cf6; /* Main brand color */
---radius: 12px;   /* UI rounding */
+--primary: #000000; /* Main brand color */
+--radius: 8px;    /* UI rounding */
 ```
 
 ```javascript
