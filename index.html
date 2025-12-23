@@ -310,6 +310,14 @@
             margin-top: 20px;
         }
 
+        @keyframes spin {
+            from { transform: rotate(0deg); }
+            to { transform: rotate(360deg); }
+        }
+        .animate-spin {
+            animation: spin 1s linear infinite;
+        }
+
         @media (max-width: 768px) {
             .grid-row { grid-template-columns: 1fr; }
             h1 { font-size: 2rem; }
@@ -481,6 +489,8 @@
             deleteSavedBtn: document.getElementById('deleteSavedBtn')
         };
 
+        let lastGeneratedPrompt = "";
+
         // Populate category dropdown
         CATEGORIES.forEach(cat => {
             const opt = document.createElement('option');
@@ -633,6 +643,7 @@
             prompt += `3. Provide the response strictly in the requested format.\n`;
             prompt += `4. Prioritize clarity, precision, and actionable output.`;
 
+            lastGeneratedPrompt = prompt;
             els.outputArea.textContent = prompt;
             document.getElementById('outputSection').scrollIntoView({ behavior: 'smooth' });
             showToast("Prompt Generated!");
@@ -648,71 +659,88 @@
                 els.parentTask.value = '';
                 els.subtask.value = '';
                 els.relevantData.value = '';
+                lastGeneratedPrompt = '';
                 els.outputArea.textContent = 'Your structured prompt will render here...';
                 sessionStorage.removeItem('epg_session');
                 showToast("Form reset");
             }
         });
 
-        // Robust Copy Function (Fix for local files)
+        // Robust Copy Function (Fix for local files & non-secure contexts)
         async function copyToClipboard(text) {
-            try {
-                // Try modern API first (works on HTTPS/Localhost)
-                await navigator.clipboard.writeText(text);
-                return true;
-            } catch (err) {
-                // Fallback for non-secure contexts (e.g., file:// protocol)
+            // 1. Try modern API (works on HTTPS/Localhost)
+            if (navigator.clipboard && window.isSecureContext) {
                 try {
-                    const textArea = document.createElement("textarea");
-                    textArea.value = text;
-                    
-                    // Ensure it's not visible but part of DOM
-                    textArea.style.position = "fixed";
-                    textArea.style.left = "-9999px";
-                    textArea.style.top = "0";
-                    document.body.appendChild(textArea);
-                    
-                    textArea.focus();
-                    textArea.select();
-                    
-                    const successful = document.execCommand('copy');
-                    document.body.removeChild(textArea);
-                    return successful;
-                } catch (fallbackErr) {
-                    console.error("Fallback copy failed", fallbackErr);
-                    return false;
+                    await navigator.clipboard.writeText(text);
+                    return true;
+                } catch (err) {
+                    console.error("Modern Clipboard API failed", err);
                 }
+            }
+            
+            // 2. Fallback for non-secure contexts (e.g., file:// protocol)
+            try {
+                const textArea = document.createElement("textarea");
+                textArea.value = text;
+                
+                // Ensure it's not visible but part of DOM
+                textArea.style.position = "fixed";
+                textArea.style.left = "-9999px";
+                textArea.style.top = "0";
+                textArea.style.opacity = "0";
+                document.body.appendChild(textArea);
+                
+                textArea.focus();
+                textArea.select();
+                
+                // For mobile/Safari
+                textArea.setSelectionRange(0, 99999);
+                
+                const successful = document.execCommand('copy');
+                document.body.removeChild(textArea);
+                return successful;
+            } catch (fallbackErr) {
+                console.error("Fallback copy failed", fallbackErr);
+                return false;
             }
         }
 
         // Copy button event listener
         els.copyBtn.addEventListener('click', async function() {
-            const text = els.outputArea.textContent;
-            if (text.includes('will render here...')) {
+            if (!lastGeneratedPrompt) {
                 showToast("Generate a prompt first", true);
                 return;
             }
             
-            const success = await copyToClipboard(text);
-            if (success) {
-                showToast("Copied to clipboard");
-            } else {
-                showToast("Failed to copy", true);
-            }
+            // Visual feedback
+            const originalHTML = els.copyBtn.innerHTML;
+            els.copyBtn.innerHTML = '<i data-lucide="loader-2" class="animate-spin" size="16"></i> Copying...';
+            lucide.createIcons();
+            
+            const success = await copyToClipboard(lastGeneratedPrompt);
+            
+            setTimeout(() => {
+                els.copyBtn.innerHTML = originalHTML;
+                lucide.createIcons();
+                if (success) {
+                    showToast("Copied to clipboard");
+                } else {
+                    showToast("Failed to copy", true);
+                }
+            }, 500);
         });
 
         // Download output
         els.downloadBtn.addEventListener('click', function() {
-            const text = els.outputArea.textContent;
-            if (text.includes('will render here...')) {
+            if (!lastGeneratedPrompt) {
                 showToast("Generate a prompt first", true);
                 return;
             }
-            const blob = new Blob([text], { type: 'text/plain' });
+            const blob = new Blob([lastGeneratedPrompt], { type: 'text/plain' });
             const url = URL.createObjectURL(blob);
             const a = document.createElement('a');
             a.href = url;
-            a.download = 'epic-prompt.md';
+            a.download = `epic-prompt-${new Date().getTime()}.md`;
             a.click();
             URL.revokeObjectURL(url);
             showToast("Download started");
