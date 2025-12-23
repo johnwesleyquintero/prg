@@ -4,10 +4,15 @@
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
     <title>Epic Prompt Generator</title>
+    
+    <!-- Inline Favicon (Purple Zap Icon) -->
+    <link rel="icon" type="image/svg+xml" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='%238b5cf6' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpolygon points='13 2 3 14 12 14 11 22 21 10 12 10 13 2'/%3E%3C/svg%3E" />
+
     <!-- Fonts -->
     <link rel="preconnect" href="https://fonts.googleapis.com" />
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet" />
+    
     <!-- Lucide Icons -->
     <script src="https://unpkg.com/lucide@latest"></script>
 
@@ -649,16 +654,51 @@
             }
         });
 
-        // Copy output
-        els.copyBtn.addEventListener('click', function() {
+        // Robust Copy Function (Fix for local files)
+        async function copyToClipboard(text) {
+            try {
+                // Try modern API first (works on HTTPS/Localhost)
+                await navigator.clipboard.writeText(text);
+                return true;
+            } catch (err) {
+                // Fallback for non-secure contexts (e.g., file:// protocol)
+                try {
+                    const textArea = document.createElement("textarea");
+                    textArea.value = text;
+                    
+                    // Ensure it's not visible but part of DOM
+                    textArea.style.position = "fixed";
+                    textArea.style.left = "-9999px";
+                    textArea.style.top = "0";
+                    document.body.appendChild(textArea);
+                    
+                    textArea.focus();
+                    textArea.select();
+                    
+                    const successful = document.execCommand('copy');
+                    document.body.removeChild(textArea);
+                    return successful;
+                } catch (fallbackErr) {
+                    console.error("Fallback copy failed", fallbackErr);
+                    return false;
+                }
+            }
+        }
+
+        // Copy button event listener
+        els.copyBtn.addEventListener('click', async function() {
             const text = els.outputArea.textContent;
             if (text.includes('will render here...')) {
                 showToast("Generate a prompt first", true);
                 return;
             }
-            navigator.clipboard.writeText(text).then(() => {
+            
+            const success = await copyToClipboard(text);
+            if (success) {
                 showToast("Copied to clipboard");
-            }).catch(() => showToast("Failed to copy", true));
+            } else {
+                showToast("Failed to copy", true);
+            }
         });
 
         // Download output
